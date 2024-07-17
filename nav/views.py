@@ -6,7 +6,6 @@ from .models import MyUser as User
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-# Create your views here.
 def index(request):
     if request.user.is_authenticated:
         return render(request, 'nav/index.html')
@@ -44,11 +43,9 @@ def register_view(request):
     else:
         return render(request, 'nav/register.html')
     
-
 @csrf_exempt
 def update_user_location(request):
     if request.user.is_authenticated:
-        # Parse the JSON body of the request
         data = json.loads(request.body)
         lat = float(data["lat"])
         lon = float(data["lon"])
@@ -58,3 +55,9 @@ def update_user_location(request):
         return HttpResponse('Location updated')
     else:
         return HttpResponseNotFound('User not found')
+
+def map_view(request):
+    if request.user.is_authenticated:
+        return render(request, 'nav/map.html')
+    else:
+        return HttpResponseRedirect(reverse('login'))

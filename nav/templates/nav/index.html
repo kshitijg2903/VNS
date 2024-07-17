@@ -46,12 +46,12 @@
             </svg>
         </button>
         <ul id="menu" class="md:flex hidden font-bold space-x-0 md:space-x-4 md:space-y-0 flex-col md:flex-row md:items-center md:justify-center md:w-auto">
-            <li class="my-2 md:my-0"><a href="#home" class="block px-2 py-1">Home</a></li>
-            <li class="my-2 md:my-0"><a href="#about" class="block px-2 py-1">About Us</a></li>
-            <li class="my-2 md:my-0"><a href="#contact" class="block px-2 py-1">Contact Us</a></li>
-            {% comment %} logout {% endcomment %}
-            <li class="my-2 md:my-0"><a href="/logout" class="block px-2 py-1">Logout</a></li>
-        </ul>
+          <li class="my-2 md:my-0"><a href="{% url 'index' %}" class="block px-2 py-1">Home</a></li>
+          <li class="my-2 md:my-0"><a href="{% url 'index' %}#about" class="block px-2 py-1">About Us</a></li>
+          <li class="my-2 md:my-0"><a href="{% url 'index' %}#contact" class="block px-2 py-1">Contact Us</a></li>
+          <li class="my-2 md:my-0"><a href="{% url 'map' %}" class="block px-2 py-1">Interactive Map</a></li>
+          <li class="my-2 md:my-0"><a href="{% url 'logout' %}" class="block px-2 py-1">Logout</a></li>
+      </ul>
     </nav>
 
     <!-- Header Content -->

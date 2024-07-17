@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/TemplateData/style.css">
+    <link rel="shortcut icon" href="/static/TemplateData/favicon.ico">
+    <title>Interactive Map | VNS</title>
+    <style>
+        body {
+            background: url('https://img.freepik.com/free-vector/minimal-geometric-stripe-shape-background_1409-1014.jpg');
+            background-size: cover;
+        }
+        .content-section {
+            background: rgba(212, 207, 207, 0.6);
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 20px;
+            color: black;
+            background-color: white;
+            outline: none;
+        }
+        .footer {
+            background: rgba(31, 41, 55, 0.9);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col">
+    <nav class="w-full bg-indigo-900 flex items-center justify-between p-4">
+        <div class="text-2xl text-white font-bold">IIIT-Delhi</div>
+        <ul class="md:flex hidden font-bold space-x-4">
+            <li><a href="{% url 'index' %}" class="block px-2 py-1">Home</a></li>
+            <li><a href="{% url 'index' %}#about" class="block px-2 py-1">About Us</a></li>
+            <li><a href="{% url 'index' %}#contact" class="block px-2 py-1">Contact Us</a></li>
+            <li><a href="{% url 'map' %}" class="block px-2 py-1">Interactive Map</a></li>
+            <li><a href="{% url 'logout' %}" class="block px-2 py-1">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="content-section" id="map-section">
+        <h2 class="text-2xl font-bold">Interactive Map</h2>
+        <input type="text" id="search-bar" placeholder="Enter your destination..." class="search-bar" />
+        <div id="directions" class="mt-4"></div>
+        <div id="unity-container" class="content-section unity-desktop px-auto">
+            <canvas id="unity-canvas" tabindex="-1" class="w-full mb-3"></canvas>
+            <div id="unity-loading-bar">
+                <div id="unity-logo"></div>
+                <div id="unity-progress-bar-empty">
+                    <div id="unity-progress-bar-full"></div>
+                </div>
+            </div>
+            <div id="unity-warning"></div>
+            <div id="unity-footer">
+                <div id="unity-webgl-logo"></div>
+                <div id="unity-fullscreen-button"></div>
+                <div id="unity-build-title">Virtual Navigation system</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#unity-loading-bar");
+        var progressBarFull = document.querySelector("#unity-progress-bar-full");
+        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+        var warningBanner = document.querySelector("#unity-warning");
+
+        function unityShowBanner(msg, type) {
+            function updateBannerVisibility() {
+                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+            }
+            var div = document.createElement('div');
+            div.innerHTML = msg;
+            warningBanner.appendChild(div);
+            if (type == 'error') div.style = 'background: red; padding: 10px;';
+            else {
+                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+                setTimeout(function() {
+                    warningBanner.removeChild(div);
+                    updateBannerVisibility();
+                }, 5000);
+            }
+            updateBannerVisibility();
+        }
+
+        var buildUrl = "static/Build";
+        var loaderUrl = buildUrl + "/vns.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/vns.data",
+            frameworkUrl: buildUrl + "/vns.framework.js",
+            codeUrl: buildUrl + "/vns.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "ECE Labs",
+            productName: "Virtual Navigation system",
+            productVersion: "0.1",
+            showBanner: unityShowBanner,
+        };
+
+        loadingBar.style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+                progressBarFull.style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = () => {
+                    unityInstance.SetFullscreen(1);
+                };
+            }).catch((message) => {
+                alert(message);
+            });
+        };
+
+        document.body.appendChild(script);
+    </script>
+
+    <footer class="footer text-center mt-6 p-4">
+        <p>© 2024 Virtual Navigation System. All rights reserved.</p>
+    </footer>
+</body>
+</html>
